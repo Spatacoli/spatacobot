@@ -1,4 +1,4 @@
-import { Client, Options } from 'tmi.js';
+import { Client, Options, ChatUserstate } from 'tmi.js';
 
 export class TwitchChat {
     client: Client;
@@ -8,13 +8,13 @@ export class TwitchChat {
         this.client = Client(opts);
         this.chatCommandPrefix = chatCommandPrefix;
         
-        this.client.on('message', this.onMessageHandler);
-        this.client.on('connected', this.onConnectedHandler);
+        this.client.on('message', this.onMessageHandler.bind(this));
+        this.client.on('connected', this.onConnectedHandler.bind(this));
 
         this.client.connect();
     }
 
-    onMessageHandler (target: any, context: any, msg: any, self: any) {
+    onMessageHandler (target: string, context: ChatUserstate, msg: string, self: boolean) {
         if (self) {
             return;
         }

@@ -5,10 +5,10 @@
         "target": "ES6",
         "moduleResolution": "node",
         "sourceMap": true,
-        "outDir": "dist/server",
+        "outDir": "../../dist/client",
     },
     "include": [
-        "src/server/index.ts",
+        "index.ts",
     ],
     "lib": [
         "ES2015",
