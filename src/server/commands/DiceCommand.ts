@@ -7,7 +7,7 @@ export default class DiceCommand implements IBasicCommand {
     Cooldown?: number;
     Execute(chatService: IChatService, userName: string): void {
         const num = this.rollDice();
-        chatService.SendMessage(`You rolled a ${num}`);
+        chatService.SendMessage(`@${userName} rolled a ${num}`);
     }
 
     private rollDice = () => {

@@ -1,16 +1,17 @@
 {
     "compilerOptions": {
+        "lib": ["ES2016", "DOM"],
         "module": "commonjs",
         "esModuleInterop": true,
-        "target": "ES6",
-        "moduleResolution": "node",
+        "target": "ES2016",
+        "moduleResolution": "classic",
         "sourceMap": true,
         "outDir": "../../dist/client",
+        "skipLibCheck": true,
+        "rootDir": "../client",
+        "strict": true,
     },
     "include": [
         "index.ts",
-    ],
-    "lib": [
-        "ES2015",
     ],
 }

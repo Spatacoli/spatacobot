@@ -1,29 +1,25 @@
+import App from "./App";
+import BotService from "./BotService";
 import * as config from "./config";
 import TwitchChatbot from "./TwitchChatbot";
+
+import AttentionCommand from "./commands/AttentionCommand";
 import DiceCommand from "./commands/DiceCommand";
 import HelloCommand from "./commands/HelloCommand";
-import { Options } from "tmi.js";
-import { log } from "./log";
+import GitHubCommand from "./commands/GitHubCommand";
 
 const UnknownCommandMessage = "Unknown command. Try !help for a list of available commands.";
 
-let Commands = [
+const app = new App();
+
+const botService = new BotService(app);
+
+let BasicCommands = [
     new HelloCommand(),
-    new DiceCommand()
+    new DiceCommand(),
+    new GitHubCommand(),
+    new AttentionCommand(botService),
 ];
 
-const opts: Options = {
-    options: {debug: true},
-    connection: {
-        secure: true,
-        reconnect: true,
-    },
-    identity: {
-        username: config.clientUsername,
-        password: config.clientToken
-    },
-    channels: config.channels
-};
-
-const chat = new TwitchChatbot(opts, config.chatCommandPrefix, Commands);
+const chat = new TwitchChatbot(config, BasicCommands);
 chat.Connect();

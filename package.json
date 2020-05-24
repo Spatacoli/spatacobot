@@ -12,11 +12,10 @@
     "debug-brk": "node --inspect-brk dist/server/index.js",
     "predebug-compile-brk": "npm run prestart",
     "debug-compile-brk": "node --inspect-brk dist/server/index.js",
-    "test": "snyk test",
+    "test": "echo no tests",
     "build": "echo build... && npm run compile",
-    "snyk-protect": "snyk protect",
-    "prepare": "npm run snyk-protect",
-    "compile": "tsc -p ./src/client && tsc -p ./src/server"
+    "compile": "tsc -p ./src/client && tsc -p ./src/server && npm run copy-assets",
+    "copy-assets": "copyfiles -au 1 ./src/assets/**/* ./src/assets/* ./src/views/* ./src/server/effects.json dist/"
   },
   "keywords": [
     "bot",
@@ -25,15 +24,23 @@
   "author": "Todd Spatafore",
   "license": "MIT",
   "devDependencies": {
+    "@types/express": "^4.17.6",
     "@types/node": "^14.0.1",
+    "@types/socket.io": "^2.1.8",
     "@types/tmi.js": "^1.4.0",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",
+    "copyfiles": "^2.2.0",
     "eslint": "^7.0.0",
+    "strict-event-emitter-types": "^2.0.0",
     "typescript": "^3.9.2"
   },
   "dependencies": {
+    "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "path": "^0.12.7",
+    "socket.io": "^2.3.0",
     "tmi.js": "^1.5.0"
   }
 }
