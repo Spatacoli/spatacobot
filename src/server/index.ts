@@ -7,6 +7,7 @@ import AttentionCommand from "./commands/AttentionCommand";
 import DiceCommand from "./commands/DiceCommand";
 import HelloCommand from "./commands/HelloCommand";
 import GitHubCommand from "./commands/GitHubCommand";
+import HelpCommand from "./commands/HelpCommand";
 
 const UnknownCommandMessage = "Unknown command. Try !help for a list of available commands.";
 
@@ -20,6 +21,8 @@ let BasicCommands = [
     new GitHubCommand(),
     new AttentionCommand(botService),
 ];
+
+BasicCommands.push(new HelpCommand(BasicCommands));
 
 const chat = new TwitchChatbot(config, BasicCommands);
 chat.Connect();
