@@ -1,4 +1,4 @@
-const heyListenAudio = new Audio('/Assets/sounds/hey_listen.mp3');
+const heyListenAudio = new Audio('/assets/sounds/hey_listen.mp3');
 
 // @ts-ignore
 const socket = io();
