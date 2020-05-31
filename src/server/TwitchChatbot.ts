@@ -3,6 +3,7 @@ import { channels } from "./config";
 import { log } from "./log";
 import IChatService from "./IChatService";
 import IBasicCommand from "./commands/IBasicCommand";
+import IBotService from "./IBotService";
 
 let _instance = null;
 
@@ -13,8 +14,9 @@ export default class TwitchChatbot implements IChatService {
     private config: any;
     private startTime: number;
     private basicCommands: IBasicCommand[];
+    private botService: IBotService;
 
-    constructor(config, basicCommands: IBasicCommand[]) {
+    constructor(config, basicCommands: IBasicCommand[], botService: IBotService) {
         if (_instance) {
             throw new Error("TwitchChatbot can only have one instance at a time. Try TwitchChatbot.terminate() first.");
         }
@@ -23,8 +25,9 @@ export default class TwitchChatbot implements IChatService {
         this.client = Client(opts);
         this.basicCommands = basicCommands;
         this.config = config;
+        this.botService = botService;
         this.client.on('chat', this.onChatHandler);
-        this.client.on("join", this.onJoin);
+        this.client.on("join", this.onJoin.bind(this));
         this.client.on("part", this.onPart);
         this.client.on('connected', this.onConnectedHandler);
 
@@ -109,7 +112,9 @@ export default class TwitchChatbot implements IChatService {
      */
     private onJoin(channel: string, username: string, self: boolean) {
         const { hours, minutes } = _instance.getTime();
-        log(`[${hours}:${minutes}] JOIN - ${username}`, "info");
+        const message = `[${hours}:${minutes}] JOIN - ${username}`;
+        log(message, "info");
+        this.botService.sendEventWithArgs("join", [message]);
     }
 
     /**

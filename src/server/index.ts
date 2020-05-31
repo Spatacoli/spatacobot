@@ -24,5 +24,5 @@ let BasicCommands = [
 
 BasicCommands.push(new HelpCommand(BasicCommands));
 
-const chat = new TwitchChatbot(config, BasicCommands);
+const chat = new TwitchChatbot(config, BasicCommands, botService);
 chat.Connect();

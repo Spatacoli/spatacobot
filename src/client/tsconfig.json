@@ -13,5 +13,6 @@
     },
     "include": [
         "index.ts",
+        "chat.ts",
     ],
 }

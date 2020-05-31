@@ -7,7 +7,12 @@ export default class BotService implements IBotService {
     constructor(app: App) {
         this.app = app;
     }
+
     sendEvent(eventName: string): void {
         this.app.getIO().emit(eventName);
+    }
+
+    sendEventWithArgs(eventName: string, args: any[]): void {
+        this.app.getIO().emit(eventName, ...args);
     }
 }
