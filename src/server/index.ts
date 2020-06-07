@@ -1,5 +1,6 @@
 import App from "./App";
 import BotService from "./BotService";
+import SEService from "./SEService";
 import * as config from "./config";
 import TwitchChatbot from "./TwitchChatbot";
 
@@ -14,6 +15,7 @@ const UnknownCommandMessage = "Unknown command. Try !help for a list of availabl
 const app = new App();
 
 const botService = new BotService(app);
+const seService = new SEService();
 
 let BasicCommands = [
     new HelloCommand(),

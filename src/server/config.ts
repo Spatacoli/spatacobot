@@ -8,7 +8,9 @@ const {
     CLIENT_TOKEN,
     CLIENT_USERNAME,
     CHANNELS,
-    CHAT_COMMAND_PREFIX
+    CHAT_COMMAND_PREFIX,
+    STREAMELEMENTS_JWT,
+    STREAMELEMENTS_URL
 } = process.env;
 
 const requireConfigMessage = 'REQUIRED CONFIGURATION WAS NOT PROVIDED';
@@ -19,3 +21,5 @@ export const clientToken: string = CLIENT_TOKEN || requireConfigMessage;
 export const clientUsername: string = CLIENT_USERNAME || requireConfigMessage;
 export const channels: string[] = CHANNELS?.split(',') || [requireConfigMessage];
 export const chatCommandPrefix: string = CHAT_COMMAND_PREFIX || '!';
+export const streamElementsJWT: string = STREAMELEMENTS_JWT || requireConfigMessage;
+export const streamElementsUrl: string = STREAMELEMENTS_URL || requireConfigMessage;
