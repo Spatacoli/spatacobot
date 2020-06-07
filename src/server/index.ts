@@ -9,22 +9,31 @@ import DiceCommand from "./commands/DiceCommand";
 import HelloCommand from "./commands/HelloCommand";
 import GitHubCommand from "./commands/GitHubCommand";
 import HelpCommand from "./commands/HelpCommand";
+import LinksCommand from "./commands/LinksCommand";
+
+import HttpTitleCommand from "./commands/HttpTitleCommand";
 
 const UnknownCommandMessage = "Unknown command. Try !help for a list of available commands.";
 
 const app = new App();
 
 const botService = new BotService(app);
-const seService = new SEService();
 
 let BasicCommands = [
     new HelloCommand(),
     new DiceCommand(),
     new GitHubCommand(),
+    new LinksCommand(),
     new AttentionCommand(botService),
 ];
 
 BasicCommands.push(new HelpCommand(BasicCommands));
 
-const chat = new TwitchChatbot(config, BasicCommands, botService);
+let ExtendedCommands = [
+    new HttpTitleCommand(),
+]
+
+const chat = new TwitchChatbot(config, BasicCommands, ExtendedCommands, botService);
 chat.Connect();
+
+const seService = new SEService(botService, chat);

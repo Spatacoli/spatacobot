@@ -4,6 +4,7 @@ import { log } from "./log";
 import IChatService from "./IChatService";
 import IBasicCommand from "./commands/IBasicCommand";
 import IBotService from "./IBotService";
+import IExtendedCommand from "./commands/IExtendedCommand";
 
 let _instance = null;
 
@@ -15,8 +16,9 @@ export default class TwitchChatbot implements IChatService {
     private startTime: number;
     private basicCommands: IBasicCommand[];
     private botService: IBotService;
+    private extendedCommands: IExtendedCommand[];
 
-    constructor(config, basicCommands: IBasicCommand[], botService: IBotService) {
+    constructor(config, basicCommands: IBasicCommand[], extendedCommands: IExtendedCommand[], botService: IBotService) {
         if (_instance) {
             throw new Error("TwitchChatbot can only have one instance at a time. Try TwitchChatbot.terminate() first.");
         }
@@ -24,9 +26,10 @@ export default class TwitchChatbot implements IChatService {
         const opts = this.constructOptions(config);
         this.client = Client(opts);
         this.basicCommands = basicCommands;
+        this.extendedCommands = extendedCommands;
         this.config = config;
         this.botService = botService;
-        this.client.on('chat', this.onChatHandler);
+        this.client.on('chat', this.onChatHandler.bind(this));
         this.client.on("join", this.onJoin.bind(this));
         this.client.on("part", this.onPart);
         this.client.on('connected', this.onConnectedHandler);
@@ -79,7 +82,7 @@ export default class TwitchChatbot implements IChatService {
         let commandName = msg.trim();
     
         if (!commandName.startsWith(_instance.config.chatCommandPrefix)) {
-            return;
+            this.processExtendedCommands(context.username, msg);
         } else {
             commandName = commandName.replace(_instance.config.chatCommandPrefix, '');
         }
@@ -96,6 +99,14 @@ export default class TwitchChatbot implements IChatService {
         if (!hasExecuted) {
             log(`* Unknown command ${commandName}`, "log");
         }
+    }
+
+    processExtendedCommands(username: string, message: string): void { 
+        this.extendedCommands.forEach(command => {
+            if(command.CanExecute(username, message)) {
+                command.Execute(this, username, message);
+            }
+        })
     }
 
     getTime() {

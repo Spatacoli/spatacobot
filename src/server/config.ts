@@ -23,3 +23,5 @@ export const channels: string[] = CHANNELS?.split(',') || [requireConfigMessage]
 export const chatCommandPrefix: string = CHAT_COMMAND_PREFIX || '!';
 export const streamElementsJWT: string = STREAMELEMENTS_JWT || requireConfigMessage;
 export const streamElementsUrl: string = STREAMELEMENTS_URL || requireConfigMessage;
+
+export const bots: string[] = ["spatacobot", "pretzelrocks"];
