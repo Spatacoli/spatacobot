@@ -29,7 +29,7 @@ export default interface IExtendedCommand {
      */
     readonly Cooldown?: number;
 
-    CanExecute (userName: string, fullCommandText: string): boolean;
+    CanExecute (userName: string, fullCommandText: string): Promise<boolean>;
 
     /**
      * Execute the command
@@ -37,5 +37,5 @@ export default interface IExtendedCommand {
      * @param userName User that invoked the command
      * @param fullCommandText The full command text
      */
-    Execute (chatService: IChatService, userName: string, fullCommandText: string): void;
+    Execute (chatService: IChatService, userName: string, fullCommandText: string): Promise<void>;
 }

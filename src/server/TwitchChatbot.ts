@@ -102,9 +102,9 @@ export default class TwitchChatbot implements IChatService {
     }
 
     processExtendedCommands(username: string, message: string): void { 
-        this.extendedCommands.forEach(command => {
-            if(command.CanExecute(username, message)) {
-                command.Execute(this, username, message);
+        this.extendedCommands.forEach(async command => {
+            if(await command.CanExecute(username, message)) {
+                await command.Execute(this, username, message);
             }
         })
     }

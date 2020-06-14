@@ -12,6 +12,7 @@ import HelpCommand from "./commands/HelpCommand";
 import LinksCommand from "./commands/LinksCommand";
 
 import HttpTitleCommand from "./commands/HttpTitleCommand";
+import ImageDescriptionCommand from "./commands/ImageDescriptorCommand";
 
 const UnknownCommandMessage = "Unknown command. Try !help for a list of available commands.";
 
@@ -31,6 +32,7 @@ BasicCommands.push(new HelpCommand(BasicCommands));
 
 let ExtendedCommands = [
     new HttpTitleCommand(),
+    new ImageDescriptionCommand(config.visionApiUrl, config.visionApiKey),
 ]
 
 const chat = new TwitchChatbot(config, BasicCommands, ExtendedCommands, botService);

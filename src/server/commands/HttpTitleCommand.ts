@@ -2,8 +2,6 @@ import fetch from "node-fetch";
 import IExtendedCommand from "./IExtendedCommand";
 import IChatService from "../IChatService";
 import { bots } from "../config";
-import { match } from "assert";
-import { response } from "express";
 
 export default class HttpPageTitleCommand implements IExtendedCommand {
     Name: string = "PageTitle";
@@ -17,29 +15,27 @@ export default class HttpPageTitleCommand implements IExtendedCommand {
     private TitleRegex: RegExp = new RegExp("<title>\\s*(.+?)\\s*<\\/title>");
     private chatService: IChatService;
 
-    CanExecute(userName: string, fullCommandText: string): boolean {
+    async CanExecute(userName: string, fullCommandText: string): Promise<boolean> {
         if (bots.includes(userName.toLocaleLowerCase())) {
-            return false;
+            return Promise.resolve(false);
         } else {
-            return true;
+            return Promise.resolve(true);
         }
     }
 
-    Execute(chatService: IChatService, userName: string, fullCommandText: string): void {
+    async Execute(chatService: IChatService, userName: string, fullCommandText: string): Promise<void> {
         this.chatService = chatService;
 
         let urls = this.GetUrls(fullCommandText);
 
-        urls.forEach(url => {
+        urls.forEach(async url => {
             // First get the source
-            this.getSource(url)
-                .then(source => {
-                    // then get the title from source
-                    let title = this.getTitle(source);
+            let source = await this.getSource(url);
+            let title = this.getTitle(source);
 
-                    // output message to screen
-                    this.chatService.SendMessage(`@${userName}'s linked page title: ${title}`);
-                });
+            if (title !== "") {
+                this.chatService.SendMessage(`@${userName}'s linked page title: ${title}`);
+            }
         });
     }
 
@@ -53,15 +49,19 @@ export default class HttpPageTitleCommand implements IExtendedCommand {
 
     private getTitle(source: string): string {
         let match = this.TitleRegex.exec(source);
-
-        return match[1];
+        if (match) {
+            return match[1];
+        } else {
+            return "";
+        }
     }
 
     private GetUrls(commandText: string): string[] {
         let urls = [];
         let match = this.urlRegex.exec(commandText)
-        
-        urls.push(match[0]);
+        if (match) {
+            urls.push(match[0]);
+        }
 
         return urls;
     }
