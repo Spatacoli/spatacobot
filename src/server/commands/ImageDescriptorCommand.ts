@@ -1,6 +1,8 @@
 import fetch from "node-fetch";
 import IExtendedCommand from "./IExtendedCommand";
 import IChatService from "../IChatService";
+import { ComputerVisionClient } from "@azure/cognitiveservices-computervision";
+import { ApiKeyCredentials } from "@azure/ms-rest-js";
 
 enum ImageProviders {
     None = 0,
@@ -54,40 +56,32 @@ export default class ImageDescriptorCommand implements IExtendedCommand {
     }
 
     async Execute(chatService: IChatService, userName: string, fullCommandText: string): Promise<void> {
-        var result = "";
-
-        let headers = {};
-        headers["Ocp-Apim-Subscription-Key"] = this._AzureApiKey;
-        headers["Content-Type"] = "application/json";
-        let uri = this._AzureUrl + "?visualFeatures=Categories,Description,Color,Adult&language=en";
-        let body = JSON.stringify({ url: this.ImageUrl });
-        let apiResponse = await fetch(uri, { method: "POST", headers: headers, body: body })
-            .catch(err => {
-                console.error(err);
-            });
-        let visionDescription = await apiResponse.json();
+        const key = this._AzureApiKey;
+        const endpoint = this._AzureUrl;
+        const computerVisionClient = new ComputerVisionClient(
+            new ApiKeyCredentials({ inHeader: { "Ocp-Apim-Subscription-Key": key } }), endpoint
+        );
+        const caption = (await computerVisionClient.describeImage(this.ImageUrl)).captions[0];
+        const contains = (await computerVisionClient.analyzeImage(this.ImageUrl, { visualFeatures: ['Adult', "Brands"] }));
         
-        if (visionDescription.adult.isAdultContent && visionDescription.adult.adultScore > 0.85) {
+        if (contains.adult.isAdultContent && contains.adult.adultScore > 0.85) {
             chatService.SendMessage(`Hey ${userName} - we don't like adult content here!`);
             return;
         }
 
-        if (visionDescription.adult.isRacyContent) {
-            chatService.SendMessage(`Hey ${userName} - that's too racy (${visionDescription.adult.racyScore}) for our chat room!`);
+        if (contains.adult.isRacyContent && contains.adult.racyScore > 0.85) {
+            chatService.SendMessage(`Hey ${userName} - that's too racy (${contains.adult.racyScore.toFixed(4)}) for our chat room!`);
             return;
         }
 
-        if (visionDescription.description.captions.Length == 0 && visionDescription.categories.Length > 0) {
-            chatService.SendMessage(`No caption for the image submitted by ${userName}, but it is: '${visionDescription.categories.map(c => c.name).join(',')}`);
-            return;
+        if (contains.brands.length) {
+            chatService.SendMessage(`${contains.brands.length} brand${contains.brands.length != 1 ? 's' : ''} found:`);
+            for (const brand of contains.brands) {
+                chatService.SendMessage(`   ${brand.name} (${brand.confidence.toFixed(2)} confidence)`);
+            }
         }
 
-        var description = "";
-        if (this.Provider === ImageProviders.Instagram) {
-            description = `${userName} Instagram - (${visionDescription.description.captions[0].confidence}): ${visionDescription.description.captions[0].text}`;
-        } else {
-            description = `${userName} Photo - (${visionDescription.description.captions[0].confidence}): ${visionDescription.description.captions[0].text}`;
-        }
+        const description = `${userName} Photo - (${caption.confidence.toFixed(2)}): ${caption.text}`;
         chatService.SendMessage(description);
     }
 

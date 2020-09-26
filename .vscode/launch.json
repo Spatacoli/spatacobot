@@ -37,7 +37,7 @@
       },
       {
         "name": "Client Debug",
-        "type": "edge",
+        "type": "msedge",
         "request": "launch",
         "version": "canary",
         "url": "http://localhost:1337/views/index.html",
